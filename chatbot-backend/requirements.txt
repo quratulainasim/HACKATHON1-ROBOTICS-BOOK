@@ -8,3 +8,4 @@ qdrant-client
 python-multipart
 requests
 beautifulsoup4
+pydantic-settings
