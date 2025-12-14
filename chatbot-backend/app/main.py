@@ -9,7 +9,7 @@ app = FastAPI(title="Context-Based RAG Chatbot API", version="1.0.0")
 # Add CORS middleware to allow requests from frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, replace with specific frontend URL
+    allow_origins=["https://hackathon1-robotics-book-production-a9bd.up.railway.app"],  # In production, replace with specific frontend URL
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
