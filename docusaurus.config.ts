@@ -158,7 +158,7 @@ const config: Config = {
   // Custom fields for server URLs
   customFields: {
     authServerUrl: process.env.AUTH_SERVER_URL || 'https://hackathon1-robotics-book-production.up.railway.app',
-    chatServerUrl: process.env.CHAT_SERVER_URL || 'htttps://localhost:8001',
+    chatServerUrl: process.env.CHAT_SERVER_URL || 'http://localhost:8001',
   },
 };
 
