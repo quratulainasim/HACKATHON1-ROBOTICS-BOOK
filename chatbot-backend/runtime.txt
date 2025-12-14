@@ -1,6 +1,0 @@
-<<<<<<< HEAD
-python-3.11.9
-
-=======
-python-3.11.9
->>>>>>> ec4166f (Prepare for deployment)
