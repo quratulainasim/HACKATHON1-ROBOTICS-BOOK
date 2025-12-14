@@ -1,11 +1,12 @@
 fastapi
-uvicorn
+uvicorn[standard]
 pydantic
+pydantic-settings
 python-dotenv
-openai
-psycopg2-binary
-qdrant-client
 python-multipart
 requests
 beautifulsoup4
-pydantic-settings
+psycopg2-binary
+qdrant-client
+openai
+
