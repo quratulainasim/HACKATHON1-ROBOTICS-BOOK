@@ -9,4 +9,7 @@ beautifulsoup4
 psycopg2-binary
 qdrant-client
 openai
+<<<<<<< HEAD
 
+=======
+>>>>>>> ec4166f (Prepare for deployment)
