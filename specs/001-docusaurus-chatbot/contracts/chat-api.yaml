@@ -1,0 +1,185 @@
+openapi: 3.0.0
+info:
+  title: Context-Based RAG Chatbot API
+  description: API for the Physical AI Robotics Book chatbot integration
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000
+    description: Development server
+  - url: https://chatbot-api.example.com
+    description: Production server
+
+paths:
+  /chat/query:
+    post:
+      summary: Ask a question using full book context
+      description: Submit a question to be answered based on the entire book content
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FullBookQueryRequest'
+      responses:
+        '200':
+          description: Successful response with answer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryResponse'
+        '400':
+          description: Bad request - invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /chat/selected-text:
+    post:
+      summary: Ask a question using selected text context
+      description: Submit a question to be answered based only on the provided selected text
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SelectedTextQueryRequest'
+      responses:
+        '200':
+          description: Successful response with answer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryResponse'
+        '400':
+          description: Bad request - invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /health:
+    get:
+      summary: Health check
+      description: Check if the chatbot service is running
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+components:
+  schemas:
+    FullBookQueryRequest:
+      type: object
+      required:
+        - question
+      properties:
+        question:
+          type: string
+          description: The natural language question
+          example: "Explain how ROS 2 handles message passing between nodes"
+        user_id:
+          type: string
+          description: Optional user identifier for session tracking
+          example: "user-12345"
+
+    SelectedTextQueryRequest:
+      type: object
+      required:
+        - question
+        - selected_text
+      properties:
+        question:
+          type: string
+          description: The natural language question
+          example: "What does this mean?"
+        selected_text:
+          type: string
+          description: The text that was selected by the user
+          example: "ROS 2 uses a publish-subscribe model for message passing between nodes..."
+        user_id:
+          type: string
+          description: Optional user identifier for session tracking
+          example: "user-12345"
+
+    QueryResponse:
+      type: object
+      required:
+        - id
+        - answer
+        - sources
+        - confidence
+      properties:
+        id:
+          type: string
+          description: Unique identifier for this response
+          example: "resp-abc123"
+        answer:
+          type: string
+          description: The AI-generated answer to the question
+          example: "ROS 2 handles message passing through a publish-subscribe model where nodes publish messages to topics and other nodes subscribe to those topics..."
+        sources:
+          type: array
+          items:
+            type: string
+          description: List of source documents used in generating the response
+          example: ["/docs/module-1-ros2/nodes-topics-services.md"]
+        confidence:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          description: Confidence level in the response accuracy
+          example: 0.95
+        groundedness_score:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          description: How well the response is grounded in the provided context
+          example: 0.98
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+        - message
+      properties:
+        error:
+          type: string
+          description: Error code
+          example: "QUERY_TOO_LONG"
+        message:
+          type: string
+          description: Human-readable error message
+          example: "Question exceeds maximum length of 500 characters"
+
+    HealthResponse:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          description: Service status
+          example: "healthy"
+        timestamp:
+          type: string
+          format: date-time
+          description: Timestamp of the health check
+          example: "2025-12-13T10:30:00Z"

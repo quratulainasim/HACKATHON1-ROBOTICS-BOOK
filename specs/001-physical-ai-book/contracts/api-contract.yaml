@@ -1,0 +1,127 @@
+# API Contract: Physical AI Book Content System
+
+## Overview
+This API provides access to the Physical AI Robotics Book content, including modules, topics, learning outcomes, and assessments.
+
+## Base URL
+`https://api.physicalai-book.com/v1`
+
+## Authentication
+All endpoints require a valid API key passed in the `Authorization` header:
+```
+Authorization: Bearer YOUR_API_KEY
+```
+
+## Endpoints
+
+### GET /modules
+Retrieve all book modules
+
+**Response**:
+```json
+{
+  "modules": [
+    {
+      "id": "module-1",
+      "title": "The Robotic Nervous System (ROS 2)",
+      "description": "Introduction to ROS 2 concepts, nodes, topics, and services",
+      "duration_weeks": 3,
+      "topics": ["nodes", "topics", "services", "rclpy", "urdf"],
+      "learning_outcomes": [
+        "Understand ROS 2 architecture",
+        "Create ROS 2 nodes in Python",
+        "Define robot models with URDF"
+      ],
+      "prerequisites": ["basic_programming", "robotics_fundamentals"]
+    }
+  ]
+}
+```
+
+### GET /modules/{module_id}
+Retrieve specific module content
+
+**Parameters**:
+- `module_id`: The ID of the module to retrieve
+
+**Response**:
+```json
+{
+  "id": "module-1",
+  "title": "The Robotic Nervous System (ROS 2)",
+  "content": {
+    "intro": "Content for the module introduction...",
+    "sections": [
+      {
+        "title": "ROS 2 Architecture",
+        "content": "Detailed content about ROS 2 architecture...",
+        "duration_minutes": 60
+      }
+    ],
+    "exercises": [
+      {
+        "title": "Create Your First ROS 2 Node",
+        "description": "Exercise to create a basic publisher/subscriber system",
+        "difficulty": "beginner"
+      }
+    ]
+  }
+}
+```
+
+### GET /weekly-breakdown
+Retrieve the weekly structure for the course
+
+**Response**:
+```json
+{
+  "weeks": [
+    {
+      "week_number": 1,
+      "topics": ["Introduction to Physical AI", "Embodied Intelligence"],
+      "learning_outcomes": ["Explain Physical AI concepts"],
+      "activities": ["Read foundational papers", "Discussion forum"],
+      "estimated_hours": 6
+    }
+  ]
+}
+```
+
+### GET /capstone
+Retrieve the capstone project details
+
+**Response**:
+```json
+{
+  "title": "Autonomous Humanoid Robot",
+  "description": "Design and implement an autonomous humanoid robot that integrates concepts from all modules",
+  "requirements": [
+    "ROS 2 navigation stack implementation",
+    "Simulation in Gazebo",
+    "Perception system using Isaac tools",
+    "Voice command processing"
+  ],
+  "evaluation_criteria": [
+    "Technical implementation",
+    "Integration of multiple modules",
+    "Documentation quality",
+    "Performance metrics"
+  ]
+}
+```
+
+## Error Responses
+All error responses follow this format:
+```json
+{
+  "error": {
+    "code": "ERROR_CODE",
+    "message": "Human-readable error message",
+    "details": "Additional error details if applicable"
+  }
+}
+```
+
+## Rate Limiting
+- 1000 requests per hour per API key
+- Responses include `X-RateLimit-Remaining` and `X-RateLimit-Reset` headers

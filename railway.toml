@@ -1,0 +1,61 @@
+# Railway configuration for dual backend services
+
+[build]
+builder = "NIXPACKS"
+
+[deploy]
+numReplicas = 1
+region = "us-central1"
+
+# Chatbot Backend Service (FastAPI)
+[service.chatbot-backend]
+name = "chatbot-backend"
+workdir = "./chatbot-backend"
+startCommand = "cd chatbot-backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+healthCheckPath = "/health/"
+port = 8000
+
+[service.chatbot-backend.build.args]
+PYTHON_VERSION = "3.11"
+
+[service.chatbot-backend.environmentVariables]
+API_HOST = "0.0.0.0"
+API_PORT = "8000"
+GEMINI_API_KEY = "${{GEMINI_API_KEY}}"
+GEMINI_MODEL = "gemini-2.5-flash"
+DATABASE_URL = "${{DATABASE_URL}}"
+NEON_DB_URL = "${{NEON_DB_URL}}"
+QDRANT_URL = "${{QDRANT_URL}}"
+QDRANT_API_KEY = "${{QDRANT_API_KEY}}"
+DOCS_PATH = "docs"
+MAX_CONTEXT_TOKENS = "3000"
+MAX_QUESTION_LENGTH = "500"
+MAX_RESPONSE_LENGTH = "10000"
+MAX_CONCURRENT_USERS = "100"
+RESPONSE_TIMEOUT = "30"
+CACHE_TTL = "3600"
+RATE_LIMIT_REQUESTS = "100"
+RATE_LIMIT_WINDOW = "60"
+EDUCATIONAL_TONE = "true"
+HALLUCINATION_PREVENTION = "true"
+EXTERNAL_KNOWLEDGE_PROHIBITED = "true"
+
+# Auth Server Service (Node.js)
+[service.auth-server]
+name = "auth-server"
+workdir = "./auth-server"
+startCommand = "cd auth-server && npm run dev"
+healthCheckPath = "/health"
+port = 3001
+
+[service.auth-server.build.args]
+NODE_VERSION = "18"
+
+[service.auth-server.environmentVariables]
+PORT = "3001"
+HOST = "0.0.0.0"
+FRONTEND_URL = "${{FRONTEND_URL}}"
+AUTH_BASE_URL = "${{auth-server.url}}"  # Reference to the deployed auth-server URL
+AUTH_SECRET = "${{AUTH_SECRET}}"
+JWT_SECRET = "${{JWT_SECRET}}"
+DATABASE_URL = "${{DATABASE_URL}}"

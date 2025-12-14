@@ -1,0 +1,112 @@
+/**
+ * CSS module for the authentication navbar component
+ */
+
+/* User avatar styling */
+.userAvatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #008080, #40E0D0);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.userAvatar:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 0 2px rgba(0, 128, 128, 0.3);
+}
+
+/* Dropdown menu for user actions */
+.userDropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.userDropdownContent {
+  display: none;
+  position: absolute;
+  right: 0;
+  background-color: white;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1000;
+  border-radius: 8px;
+  overflow: hidden;
+  top: 100%;
+  margin-top: 5px;
+}
+
+.userDropdownContent a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.userDropdownContent a:hover {
+  background-color: #f1f1f1;
+}
+
+.userDropdownContent button {
+  width: 100%;
+  background: none;
+  border: none;
+  color: black;
+  padding: 12px 16px;
+  text-align: left;
+  text-decoration: none;
+  display: block;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.userDropdownContent button:hover {
+  background-color: #f1f1f1;
+}
+
+.userDropdownContent button:focus {
+  outline: none;
+}
+
+.userDropdown.show .userDropdownContent {
+  display: block;
+}
+
+.userDropdownToggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+}
+
+.navbarSignInButton {
+  background: linear-gradient(135deg, #008080, #40E0D0);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.navbarSignInButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 128, 128, 0.3);
+}

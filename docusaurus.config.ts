@@ -5,9 +5,9 @@ import type * as Preset from '@docusaurus/preset-classic';
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 const config: Config = {
-  title: 'My Site',
-  tagline: 'Dinosaurs are cool',
-  favicon: 'img/favicon.ico',
+  title: 'Physical AI Robotics Book',
+  tagline: 'A Comprehensive Guide to Physical AI and Humanoid Robotics',
+  favicon: 'img/ai.png',
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
   future: {
@@ -15,15 +15,15 @@ const config: Config = {
   },
 
   // Set the production url of your site here
-  url: 'https://your-docusaurus-site.example.com',
+  url: 'https://physical-ai-book.example.com',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/',
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'facebook', // Usually your GitHub org/user name.
-  projectName: 'docusaurus', // Usually your repo name.
+  organizationName: 'robotics-book', // Usually your GitHub org/user name.
+  projectName: 'physical-ai-robotics-book', // Usually your repo name.
 
   onBrokenLinks: 'throw',
 
@@ -46,21 +46,6 @@ const config: Config = {
           editUrl:
             'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
         },
-        blog: {
-          showReadingTime: true,
-          feedOptions: {
-            type: ['rss', 'atom'],
-            xslt: true,
-          },
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
-          editUrl:
-            'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
-          // Useful options to enforce blogging best practices
-          onInlineTags: 'warn',
-          onInlineAuthors: 'warn',
-          onUntruncatedBlogPosts: 'warn',
-        },
         theme: {
           customCss: './src/css/custom.css',
         },
@@ -74,22 +59,34 @@ const config: Config = {
     colorMode: {
       respectPrefersColorScheme: true,
     },
+    stylesheets: [
+      {
+        href: 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css',
+        type: 'text/css',
+        integrity: 'sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==',
+        crossorigin: 'anonymous',
+      },
+    ],
     navbar: {
-      title: 'My Site',
+      title: 'Physical AI Robotics Book',
       logo: {
-        alt: 'My Site Logo',
-        src: 'img/logo.svg',
+        alt: 'Physical AI Robotics Book Logo',
+        src: 'img/ai.png',
       },
       items: [
         {
           type: 'docSidebar',
-          sidebarId: 'tutorialSidebar',
+          sidebarId: 'bookSidebar',
           position: 'left',
-          label: 'Tutorial',
+          label: 'Book Content',
         },
-        {to: '/blog', label: 'Blog', position: 'left'},
         {
-          href: 'https://github.com/facebook/docusaurus',
+          href: '/auth',
+          label: 'Sign In',
+          position: 'right',
+        },
+        {
+          href: 'https://github.com/robotics-book/physical-ai-robotics-book',
           label: 'GitHub',
           position: 'right',
         },
@@ -99,28 +96,44 @@ const config: Config = {
       style: 'dark',
       links: [
         {
-          title: 'Docs',
+          title: 'Book Content',
           items: [
             {
-              label: 'Tutorial',
-              to: '/docs/intro',
+              label: 'Introduction',
+              to: '/docs/intro/physical-ai-overview',
+            },
+            {
+              label: 'Module 1: ROS 2',
+              to: '/docs/module-1-ros2/intro',
+            },
+            {
+              label: 'Module 2: Simulation',
+              to: '/docs/module-2-simulation/intro',
+            },
+            {
+              label: 'Module 3: NVIDIA Isaac',
+              to: '/docs/module-3-nvidia-isaac/intro',
+            },
+            {
+              label: 'Module 4: VLA Systems',
+              to: '/docs/module-4-vla/intro',
             },
           ],
         },
         {
-          title: 'Community',
+          title: 'Resources',
           items: [
             {
-              label: 'Stack Overflow',
-              href: 'https://stackoverflow.com/questions/tagged/docusaurus',
+              label: 'ROS 2 Documentation',
+              href: 'https://docs.ros.org/en/humble/',
             },
             {
-              label: 'Discord',
-              href: 'https://discordapp.com/invite/docusaurus',
+              label: 'Gazebo Simulation',
+              href: 'https://gazebosim.org/',
             },
             {
-              label: 'X',
-              href: 'https://x.com/docusaurus',
+              label: 'NVIDIA Isaac',
+              href: 'https://developer.nvidia.com/isaac',
             },
           ],
         },
@@ -128,23 +141,24 @@ const config: Config = {
           title: 'More',
           items: [
             {
-              label: 'Blog',
-              to: '/blog',
-            },
-            {
               label: 'GitHub',
-              href: 'https://github.com/facebook/docusaurus',
+              href: 'https://github.com/robotics-book/physical-ai-robotics-book',
             },
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Physical AI Robotics Book. Built with Docusaurus.`,
     },
     prism: {
       theme: prismThemes.github,
       darkTheme: prismThemes.dracula,
     },
   } satisfies Preset.ThemeConfig,
+
+  // Custom fields for auth server URL
+  customFields: {
+    authServerUrl: process.env.AUTH_SERVER_URL || 'http://localhost:3001',
+  },
 };
 
 export default config;

@@ -28,3 +28,257 @@
   --ifm-color-primary-lightest: #4fddbf;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
+
+/* Chat widget container to ensure it appears properly on the page */
+.chat-widget {
+  position: fixed !important;
+  bottom: 20px !important;
+  right: 20px !important;
+  z-index: 9999 !important; /* Highest z-index to ensure it's always on top */
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif !important;
+  pointer-events: auto !important; /* Ensure it receives mouse events */
+  display: block !important; /* Ensure it's displayed */
+  visibility: visible !important; /* Ensure it's visible */
+}
+
+/* Ensure the chat widget is always visible even when other elements try to cover it */
+.chat-widget {
+  position: fixed !important;
+  bottom: 20px !important;
+  right: 20px !important;
+  z-index: 9999 !important; /* Highest z-index to ensure it's always on top */
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif !important;
+  pointer-events: auto !important; /* Ensure it receives mouse events */
+  visibility: visible !important; /* Ensure it's visible */
+  opacity: 1 !important; /* Ensure it's fully opaque */
+  min-width: 60px !important; /* Ensure minimum size for the toggle button */
+  min-height: 60px !important; /* Ensure minimum size for the toggle button */
+}
+
+/* Override any conflicting styles that might hide the widget */
+*:not(.chat-widget) {
+  z-index: auto !important;
+}
+
+/* Ensure button is always visible when widget is closed */
+.chat-widget:not(.open) {
+  min-width: 60px !important;
+  min-height: 60px !important;
+}
+
+.chat-widget .chat-toggle-btn {
+  background: linear-gradient(135deg, #008080, #40E0D0) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 50% !important;
+  width: 60px !important;
+  height: 60px !important;
+  font-size: 18px !important;
+  cursor: pointer !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.3s ease !important;
+  z-index: 9999 !important; /* Highest z-index to ensure it's always on top */
+  pointer-events: auto !important; /* Ensure it receives mouse events */
+  opacity: 1 !important; /* Ensure it's visible */
+  visibility: visible !important; /* Ensure it's visible */
+}
+
+/* Additional styling for the button that appears when chat is closed */
+.chat-toggle-btn {
+  background-color: #4f46e5 !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 50% !important;
+  width: 60px !important;
+  height: 60px !important;
+  font-size: 18px !important;
+  cursor: pointer !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.3s ease !important;
+  z-index: 9999 !important; /* Highest z-index to ensure it's always on top */
+  position: fixed !important;
+  bottom: 20px !important;
+  right: 20px !important;
+  pointer-events: auto !important; /* Ensure it receives mouse events */
+  opacity: 1 !important; /* Ensure it's visible */
+  visibility: visible !important; /* Ensure it's visible */
+  min-width: 60px !important; /* Ensure minimum size */
+  min-height: 60px !important; /* Ensure minimum size */
+}
+
+/* Also target the specific button class used in the component */
+.chat-widget .chat-toggle-btn {
+  background: linear-gradient(135deg, #008080, #40E0D0) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 50% !important;
+  width: 60px !important;
+  height: 60px !important;
+  font-size: 18px !important;
+  cursor: pointer !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.3s ease !important;
+  z-index: 9999 !important; /* Highest z-index to ensure it's always on top */
+  position: fixed !important;
+  bottom: 20px !important;
+  right: 20px !important;
+  pointer-events: auto !important; /* Ensure it receives mouse events */
+  opacity: 1 !important; /* Ensure it's visible */
+  visibility: visible !important; /* Ensure it's visible */
+  min-width: 60px !important; /* Ensure minimum size */
+  min-height: 60px !important; /* Ensure minimum size */
+}
+
+.chat-widget .chat-toggle-btn:hover {
+  background: linear-gradient(135deg, #40E0D0, #008080) !important;
+  transform: scale(1.05) !important;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Ensure the chat widget is visible even when other elements try to cover it */
+*:not(.chat-widget) {
+  z-index: auto !important;
+}
+
+.chat-widget .chat-container {
+  width: 350px !important;
+  height: 500px !important;
+  background-color: white !important;
+  border-radius: 12px !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  z-index: 1001 !important;
+}
+
+.chat-widget .chat-header {
+  background: linear-gradient(135deg, #008080, #40E0D0) !important;
+  color: white !important;
+  padding: 15px !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+}
+
+.chat-widget .chat-messages {
+  flex: 1 !important;
+  overflow-y: auto !important;
+  padding: 15px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  background-color: #f9fafb !important;
+}
+
+.chat-widget .message {
+  max-width: 80% !important;
+  padding: 10px 14px !important;
+  border-radius: 18px !important;
+  position: relative !important;
+  animation: fadeIn 0.3s ease !important;
+}
+
+.chat-widget .message.user {
+  align-self: flex-end !important;
+  background: linear-gradient(135deg, #008080, #40E0D0) !important;
+  color: white !important;
+  border-bottom-right-radius: 4px !important;
+}
+
+.chat-widget .message.assistant {
+  align-self: flex-start !important;
+  background-color: white !important;
+  border: 1px solid #e5e7eb !important;
+  border-bottom-left-radius: 4px !important;
+}
+
+.chat-widget .chat-input-form {
+  display: flex !important;
+  padding: 15px !important;
+  background-color: white !important;
+  border-top: 1px solid #e5e7eb !important;
+}
+
+.chat-widget .chat-input-form input {
+  flex: 1 !important;
+  padding: 10px 14px !important;
+  border: 1px solid #d1d5db !important;
+  border-radius: 20px !important;
+  font-size: 14px !important;
+  outline: none !important;
+}
+
+.chat-widget .chat-input-form button {
+  background: linear-gradient(135deg, #008080, #40E0D0) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 50% !important;
+  width: 40px !important;
+  height: 40px !important;
+  margin-left: 10px !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Fix for sidebar overlapping navbar */
+.navbar-sidebar-container {
+  z-index: 200 !important;
+}
+
+/* Ensure navbar stays above sidebar */
+.navbar {
+  z-index: 201 !important;
+  position: relative !important;
+}
+
+/* Adjust sidebar positioning to prevent overlap */
+.sidebar {
+  z-index: 199 !important;
+}
+
+/* Fix for responsive sidebar that might overlap navbar */
+@media (max-width: 996px) {
+  .navbar-sidebar-container {
+    z-index: 200 !important;
+  }
+
+  .navbar {
+    z-index: 201 !important;
+    position: relative !important;
+  }
+
+  .sidebar {
+    z-index: 199 !important;
+  }
+
+  /* Ensure mobile menu doesn't interfere with navbar */
+  .navbar__toggle {
+    z-index: 202 !important;
+  }
+}
+
+/* Additional fix for doc page layout when sidebar is present */
+.DocSidebarContainer {
+  z-index: 199 !important;
+}
+
+.DocPage {
+  z-index: 200 !important;
+}
+
+/* Ensure navbar always appears above all content */
+.navbar--fixed-top {
+  z-index: 201 !important;
+}
