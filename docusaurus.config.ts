@@ -155,9 +155,10 @@ const config: Config = {
     },
   } satisfies Preset.ThemeConfig,
 
-  // Custom fields for auth server URL
+  // Custom fields for server URLs
   customFields: {
-    authServerUrl: process.env.AUTH_SERVER_URL || 'http://localhost:3001',
+    authServerUrl: process.env.AUTH_SERVER_URL || 'https://hackathon1-robotics-book-production.up.railway.app',
+    chatServerUrl: process.env.CHAT_SERVER_URL || 'http://localhost:8001',
   },
 };
 

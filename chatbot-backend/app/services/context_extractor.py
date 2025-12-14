@@ -40,11 +40,11 @@ class ContextExtractor:
 
         # Process contexts from Qdrant
         for ctx_data in qdrant_contexts:
-            relevance_score = ctx_data['relevance_score']
+            relevance_score = ctx_data.get('relevance_score', 0.0)
 
             # Only include content that has some relevance
             if relevance_score > 0.1:  # Threshold to filter out irrelevant content
-                content_to_process = ctx_data['content']
+                content_to_process = ctx_data.get('content', '')
 
                 # Check if content exceeds the Context model limit and chunk if needed
                 if len(content_to_process) > 13000:  # Max length from Context validation
@@ -60,12 +60,12 @@ class ContextExtractor:
                         chunk_context = Context.create_context(
                             source_type=SourceType.section,
                             content=chunk,
-                            source_path=ctx_data['source_path'],
+                            source_path=ctx_data.get('source_path', ''),
                             relevance_score=max(0.0, chunk_relevance),  # Ensure non-negative
                             metadata={
-                                'title': ctx_data['title'],
+                                'title': ctx_data.get('title', ''),
                                 'headings': extract_headings(chunk),
-                                'last_modified': ctx_data['metadata']['last_modified'],
+                                'last_modified': ctx_data.get('last_modified', ''),
                                 'chunk_info': f'chunk_{i+1}_of_{len(chunks)}'
                             }
                         )
@@ -83,12 +83,12 @@ class ContextExtractor:
                     context = Context.create_context(
                         source_type=SourceType.chapter,  # or section based on structure
                         content=content_to_process,
-                        source_path=ctx_data['source_path'],
+                        source_path=ctx_data.get('source_path', ''),
                         relevance_score=relevance_score,
                         metadata={
-                            'title': ctx_data['title'],
-                            'headings': ctx_data['metadata']['headings'],
-                            'last_modified': ctx_data['metadata']['last_modified']
+                            'title': ctx_data.get('title', ''),
+                            'headings': extract_headings(content_to_process),
+                            'last_modified': ctx_data.get('last_modified', '')
                         }
                     )
 
@@ -111,12 +111,12 @@ class ContextExtractor:
                                 chunk_context = Context.create_context(
                                     source_type=SourceType.section,
                                     content=chunks[0],  # Take the first chunk that fits
-                                    source_path=ctx_data['source_path'],
+                                    source_path=ctx_data.get('source_path', ''),
                                     relevance_score=relevance_score,
                                     metadata={
-                                        'title': ctx_data['title'],
+                                        'title': ctx_data.get('title', ''),
                                         'headings': extract_headings(chunks[0]),
-                                        'last_modified': ctx_data['metadata']['last_modified'],
+                                        'last_modified': ctx_data.get('last_modified', ''),
                                         'chunk_info': 'first_chunk'
                                     }
                                 )

@@ -197,7 +197,10 @@ class QdrantService:
         # Convert hash to a vector of floats
         vector = []
         for i in range(0, len(hash_str), 2):
-            hex_pair = hash_str[i:i+2] if i+2 <= len(hash_str) else hash_str[i:]
+            # Get the hex pair, ensuring we don't go out of bounds
+            end_idx = min(i+2, len(hash_str))
+            hex_pair = hash_str[i:end_idx]
+
             # Convert hex to int, normalize to range [0, 1]
             value = int(hex_pair, 16) / 255.0
             vector.append(value)

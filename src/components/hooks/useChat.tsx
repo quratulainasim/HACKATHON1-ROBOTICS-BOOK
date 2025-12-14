@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useAppConfig } from './useAppConfig';
 
 interface ChatResponse {
   id: string;
@@ -11,6 +12,7 @@ interface ChatResponse {
 export const useChat = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const config = useAppConfig();
 
   const sendMessage = async (
     question: string,
@@ -20,10 +22,12 @@ export const useChat = () => {
     setError(null);
 
     try {
+      const chatServerUrl = config.chatServerUrl;
+
       let response;
       if (selectedText) {
         // Use selected text mode with correct API endpoint
-        response = await fetch('http://localhost:8001/chat/selected-text', {
+        response = await fetch(`${chatServerUrl}/chat/selected-text`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -35,7 +39,7 @@ export const useChat = () => {
         });
       } else {
         // Use full book mode with correct API endpoint
-        response = await fetch('http://localhost:8001/chat/query', {
+        response = await fetch(`${chatServerUrl}/chat/query`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

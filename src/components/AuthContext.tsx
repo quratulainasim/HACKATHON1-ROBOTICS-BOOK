@@ -35,7 +35,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Define functions first so they're available to useEffect
   const fetchUser = async (authToken: string) => {
     try {
-      const response = await fetch('http://localhost:3001/api/auth/user', {
+      const authServerUrl = process.env.REACT_APP_AUTH_SERVER_URL || 'https://hackathon1-robotics-book-production.up.railway.app';
+      const response = await fetch(`${authServerUrl}/api/auth/user`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${authToken}`,
@@ -65,7 +66,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const signIn = async (email: string, password: string) => {
     try {
-      const response = await fetch('http://localhost:3001/api/auth/sign-in/email', {
+      const authServerUrl = process.env.REACT_APP_AUTH_SERVER_URL || 'https://hackathon1-robotics-book-production.up.railway.app';
+      const response = await fetch(`${authServerUrl}/api/auth/sign-in/email`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -92,7 +94,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const signUp = async (email: string, password: string, name: string) => {
     try {
-      const response = await fetch('http://localhost:3001/api/auth/sign-up/email', {
+      const authServerUrl = process.env.REACT_APP_AUTH_SERVER_URL || 'https://hackathon1-robotics-book-production.up.railway.app';
+      const response = await fetch(`${authServerUrl}/api/auth/sign-up/email`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -120,7 +123,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const signOut = async () => {
     if (token) {
       try {
-        await fetch('http://localhost:3001/api/auth/sign-out', {
+        const authServerUrl = process.env.REACT_APP_AUTH_SERVER_URL || 'https://hackathon1-robotics-book-production.up.railway.app';
+        await fetch(`${authServerUrl}/api/auth/sign-out`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -142,7 +146,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const getUser = async () => {
     if (token) {
       try {
-        const response = await fetch('http://localhost:3001/api/auth/user', {
+        const authServerUrl = process.env.REACT_APP_AUTH_SERVER_URL || 'https://hackathon1-robotics-book-production.up.railway.app';
+        const response = await fetch(`${authServerUrl}/api/auth/user`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${token}`,
