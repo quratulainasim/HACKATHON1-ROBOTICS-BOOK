@@ -14,7 +14,18 @@ const pool = new Pool({
 });
 
 const JWT_SECRET = process.env.JWT_SECRET || process.env.AUTH_SECRET || "fallback-secret";
+
 const router = express.Router();
+
+// === CRITICAL FIX: Handle CORS preflight for all routes ===
+router.options('*', (req, res) => {
+  res.set('Access-Control-Allow-Origin', '*'); // Or your Vercel domain
+  res.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.set('Access-Control-Allow-Credentials', 'true');
+  res.status(204).end();
+});
+// ===============================================================
 
 // JWT utility functions
 const generateToken = (userId: string | number) => {
@@ -33,30 +44,24 @@ const verifyToken = (token: string) => {
 router.post('/sign-up/email', async (req, res) => {
   try {
     const { email, password, name } = req.body;
-
     if (!email || !password || !name) {
       return res.status(400).json({ error: 'Email, password, and name are required' });
     }
 
-    // Check if user already exists
     const existingUser = await pool.query(
       'SELECT id FROM users WHERE email = $1',
       [email.toLowerCase()]
     );
-
     if (existingUser.rows.length > 0) {
       return res.status(400).json({ error: 'User already exists' });
     }
 
-    // Validate password strength
     if (password.length < 8) {
       return res.status(400).json({ error: 'Password must be at least 8 characters long' });
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create user
     const result = await pool.query(
       `INSERT INTO users (email, password_hash, name, email_verified, created_at, updated_at)
        VALUES ($1, $2, $3, $4, $5, $6)
@@ -65,8 +70,6 @@ router.post('/sign-up/email', async (req, res) => {
     );
 
     const user = result.rows[0];
-
-    // Generate JWT
     const token = generateToken(user.id);
 
     return res.status(201).json({
@@ -88,12 +91,10 @@ router.post('/sign-up/email', async (req, res) => {
 router.post('/sign-in/email', async (req, res) => {
   try {
     const { email, password } = req.body;
-
     if (!email || !password) {
       return res.status(400).json({ error: 'Email and password are required' });
     }
 
-    // Find user
     const result = await pool.query(
       'SELECT id, email, password_hash, name FROM users WHERE email = $1',
       [email.toLowerCase()]
@@ -104,14 +105,12 @@ router.post('/sign-in/email', async (req, res) => {
     }
 
     const user = result.rows[0];
-
-    // Verify password
     const isValid = await bcrypt.compare(password, user.password_hash);
+
     if (!isValid) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    // Generate JWT
     const token = generateToken(user.id);
 
     return res.json({
@@ -131,7 +130,7 @@ router.post('/sign-in/email', async (req, res) => {
 // Middleware to verify JWT
 const authenticateToken = (req: express.Request, res: express.Response, next: express.NextFunction) => {
   const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
+  const token = authHeader && authHeader.split(' ')[1];
 
   if (!token) {
     return res.status(401).json({ error: 'Access token required' });
@@ -146,11 +145,10 @@ const authenticateToken = (req: express.Request, res: express.Response, next: ex
   return next();
 };
 
-// Get user profile (protected route)
+// Get user profile
 router.get('/user', authenticateToken, async (req, res) => {
   try {
     const userId = (req as any).userId;
-
     const result = await pool.query(
       'SELECT id, email, name, email_verified, created_at FROM users WHERE id = $1',
       [userId]
@@ -161,6 +159,7 @@ router.get('/user', authenticateToken, async (req, res) => {
     }
 
     const user = result.rows[0];
+
     return res.json({
       user: {
         id: user.id,
@@ -176,9 +175,8 @@ router.get('/user', authenticateToken, async (req, res) => {
   }
 });
 
-// Sign out (client-side operation - just invalidate token on client)
+// Sign out
 router.post('/sign-out', authenticateToken, (req, res) => {
-  // In a real implementation, you might want to add the token to a blacklist
   return res.json({ message: 'Signed out successfully' });
 });
 
