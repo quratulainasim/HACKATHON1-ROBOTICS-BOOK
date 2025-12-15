@@ -12,7 +12,7 @@ const Root = ({ children }: { children: React.ReactNode }) => {
   React.useEffect(() => {
     const customFields: any = siteConfig.customFields || {};
     (window as any).__APP_CONFIG__ = {
-      chatServerUrl: customFields.chatServerUrl || 'http://localhost:8001',
+      chatServerUrl: customFields.chatServerUrl || 'https://hackathon1-robotics-book-production-a9bd.up.railway.app',
       authServerUrl: customFields.authServerUrl || 'https://hackathon1-robotics-book-production.up.railway.app',
     };
   }, [siteConfig]);
