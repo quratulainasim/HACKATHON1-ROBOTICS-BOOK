@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx kill-port 3001)",
+      "Bash(npm run dev)",
+      "Bash(curl -v -X POST http://localhost:3001/api/auth/sign-up/email -H \"Content-Type: application/json\" -d '{\"\"email\"\":\"\"test@example.com\"\",\"\"password\"\":\"\"password123\"\",\"\"name\"\":\"\"Test User\"\"}')",
+      "Bash(curl -v -X POST http://localhost:3001/api/auth/sign-in/email -H \"Content-Type: application/json\" -d \"{\"\"email\"\":\"\"test@example.com\"\",\"\"password\"\":\"\"password123\"\"}\")",
+      "Bash(curl -v -X POST http://localhost:3001/api/auth/sign-up/email -H \"Content-Type: application/json\" -d \"{\"\"email\"\":\"\"test@example.com\"\",\"\"password\"\":\"\"password123\"\",\"\"name\"\":\"\"Test User\"\"}\")",
+      "Bash(node dist/index.js)",
+      "Bash(curl -X POST http://localhost:3002/test-full-signup -H \"Content-Type: application/json\" -d '{\"\"email\"\":\"\"test@example.com\"\",\"\"password\"\":\"\"password123\"\",\"\"name\"\":\"\"Test User\"\"}')",
+      "Bash(node debug-signup.js)",
+      "Bash(curl -s http://localhost:8001/docs)"
+    ]
+  },
+  "outputStyle": "default"
+}
