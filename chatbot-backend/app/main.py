@@ -9,7 +9,14 @@ app = FastAPI(title="Context-Based RAG Chatbot API", version="1.0.0")
 # Add CORS middleware to allow requests from frontend
 app.add_middleware(
     CORSMiddleware,
+<<<<<<< HEAD
     allow_origins=["https://hackathon1-robotics-book-production-a9bd.up.railway.app"],  # In production, replace with specific frontend URL
+=======
+    allow_origins=[
+        "http://localhost:3000", 
+        "https://hackathon1-robotics-book-production-a9bd.up.railway.app",
+        ],  # In production, replace with specific frontend URL
+>>>>>>> a63f5c1 (Fix CORS for localhost and Railway frontend)
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -21,4 +28,8 @@ app.include_router(health.router, prefix="/health", tags=["health"])
 
 if __name__ == "__main__":
     import uvicorn
+<<<<<<< HEAD
     uvicorn.run("app.main:app", host="0.0.0.0", port=8001, reload=True)
+=======
+    uvicorn.run("app.main:app", host="0.0.0.0", port=8001, reload=True)
+>>>>>>> a63f5c1 (Fix CORS for localhost and Railway frontend)
