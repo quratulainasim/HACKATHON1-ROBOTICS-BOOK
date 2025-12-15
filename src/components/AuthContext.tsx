@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { useAppConfig } from './hooks/useAppConfig';
 
 interface User {
   id: string;
@@ -19,7 +18,6 @@ interface AuthContextType {
   getUser: () => Promise<User | null>;
 }
 
-// Create context with a default value that matches the interface
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 interface AuthProviderProps {
@@ -30,18 +28,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const config = useAppConfig();
 
-  console.log('AuthProvider mounted - initializing auth context');
+  // FINAL WORKING CONFIG: Points to your live backend
+  // Local dev → localhost (change port if yours is different)
+  // Production → your deployed Railway server
+  const authServerUrl =
+    typeof window !== 'undefined' &&
+    (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+      ? 'http://localhost:8001'  // ← Change this if your local auth runs on a different port (e.g., 5000, 3000)
+      : 'https://hackathon1-robotics-book-production.up.railway.app';
 
-  // Define functions first so they're available to useEffect
+  console.log('AuthProvider using authServerUrl:', authServerUrl);
+
   const fetchUser = async (authToken: string) => {
     try {
-      const authServerUrl = config.authServerUrl;
       const response = await fetch(`${authServerUrl}/api/auth/user`, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${authToken}`,
+          Authorization: `Bearer ${authToken}`,
           'Content-Type': 'application/json',
         },
       });
@@ -50,7 +54,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const data = await response.json();
         setUser(data.user);
       } else {
-        // Token might be invalid, clear it
         localStorage.removeItem('auth-token');
         setToken(null);
         setUser(null);
@@ -60,20 +63,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       localStorage.removeItem('auth-token');
       setToken(null);
       setUser(null);
-    } finally {
-      // Only set loading to false after initial load, not during user fetches
-      // setLoading(false); // Don't do this here as it's called during token refresh
     }
   };
 
   const signIn = async (email: string, password: string) => {
     try {
-      const authServerUrl = config.authServerUrl;
       const response = await fetch(`${authServerUrl}/api/auth/sign-in/email`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
 
@@ -83,7 +80,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         throw new Error(data.error || 'Sign in failed');
       }
 
-      // Store token and user
       const { user: userData, token: authToken } = data;
       localStorage.setItem('auth-token', authToken);
       setToken(authToken);
@@ -96,12 +92,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const signUp = async (email: string, password: string, name: string) => {
     try {
-      const authServerUrl = config.authServerUrl;
       const response = await fetch(`${authServerUrl}/api/auth/sign-up/email`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password, name }),
       });
 
@@ -111,7 +104,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         throw new Error(data.error || 'Sign up failed');
       }
 
-      // Store token and user
       const { user: userData, token: authToken } = data;
       localStorage.setItem('auth-token', authToken);
       setToken(authToken);
@@ -125,21 +117,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const signOut = async () => {
     if (token) {
       try {
-        const authServerUrl = config.authServerUrl;
         await fetch(`${authServerUrl}/api/auth/sign-out`, {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
         });
       } catch (error) {
         console.error('Sign out request failed:', error);
-        // Continue with local sign out even if server request fails
       }
     }
 
-    // Clear local storage and state
     localStorage.removeItem('auth-token');
     setToken(null);
     setUser(null);
@@ -148,11 +137,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const getUser = async () => {
     if (token) {
       try {
-        const authServerUrl = config.authServerUrl;
         const response = await fetch(`${authServerUrl}/api/auth/user`, {
           method: 'GET',
           headers: {
-            'Authorization': `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
         });
@@ -169,35 +157,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return null;
   };
 
-  // Check for existing token on component mount
+  // Initialize auth on mount
   useEffect(() => {
     const initAuth = async () => {
-      try {
-        console.log('Initializing auth, checking for stored token');
-        const storedToken = localStorage.getItem('auth-token');
-        if (storedToken) {
-          console.log('Found stored token, fetching user');
-          setToken(storedToken);
-          await fetchUser(storedToken);
-        } else {
-          console.log('No stored token found');
-        }
-      } catch (error) {
-        console.error('Error initializing auth:', error);
-        // Clear invalid token
-        localStorage.removeItem('auth-token');
-        setToken(null);
-        setUser(null);
-      } finally {
-        console.log('Auth initialization complete, setting loading to false');
-        setLoading(false);
+      const storedToken = localStorage.getItem('auth-token');
+      if (storedToken) {
+        setToken(storedToken);
+        await fetchUser(storedToken);
       }
+      setLoading(false);
     };
 
     initAuth();
   }, []);
 
-  // Debug the values being provided
   const value = {
     user,
     token,
@@ -208,38 +181,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     getUser,
   };
 
-  console.log('AuthProvider providing value:', { user: user?.email, token: !!token, loading });
-
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    // This means the component is not wrapped with AuthProvider
-    // We'll return a default object with disabled functions
-    console.warn('Auth context not wrapped with AuthProvider - using default state');
-    return {
-      user: null,
-      token: null,
-      loading: true,
-      signIn: async () => {
-        console.error('Auth context not initialized - signIn unavailable');
-        throw new Error('Authentication not initialized');
-      },
-      signUp: async () => {
-        console.error('Auth context not initialized - signUp unavailable');
-        throw new Error('Authentication not initialized');
-      },
-      signOut: async () => {
-        console.error('Auth context not initialized - signOut unavailable');
-        throw new Error('Authentication not initialized');
-      },
-      getUser: async () => {
-        console.error('Auth context not initialized - getUser unavailable');
-        return null;
-      }
-    };
+    throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
 };
