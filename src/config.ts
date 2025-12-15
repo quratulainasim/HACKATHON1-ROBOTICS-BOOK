@@ -8,7 +8,7 @@ interface AppConfig {
 
 // Default configuration
 const defaultConfig: AppConfig = {
-  chatServerUrl: 'http://localhost:8001',
+  chatServerUrl: 'https://hackathon1-robotics-book-production-a9bd.up.railway.app',
   authServerUrl: 'https://hackathon1-robotics-book-production.up.railway.app',
 };
 
