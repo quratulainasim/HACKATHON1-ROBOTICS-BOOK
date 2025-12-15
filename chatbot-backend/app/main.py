@@ -24,8 +24,5 @@ app.include_router(health.router, prefix="/health", tags=["health"])
 
 if __name__ == "__main__":
     import uvicorn
-<<<<<<< HEAD
     uvicorn.run("app.main:app", host="0.0.0.0", port=8001, reload=True)
-=======
-    uvicorn.run("app.main:app", host="0.0.0.0", port=8001, reload=True)
->>>>>>> a63f5c1 (Fix CORS for localhost and Railway frontend)
+    
