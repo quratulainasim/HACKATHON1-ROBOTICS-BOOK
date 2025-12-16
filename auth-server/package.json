@@ -1,7 +1,7 @@
 {
   "name": "auth-server",
   "version": "1.0.0",
-  "description": "Backend server with Better Auth",
+  "description": "Node.js server with Better Auth and Neon DB",
   "main": "dist/index.js",
   "scripts": {
     "dev": "nodemon src/index.ts",
