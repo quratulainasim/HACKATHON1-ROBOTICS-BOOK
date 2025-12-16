@@ -1,83 +1,49 @@
-import { Pool, PoolClient } from "pg";
-import dotenv from "dotenv";
+// src/migrate.ts
+import { Client } from "pg";
+import "dotenv/config";
 
-dotenv.config();
-
-// Initialize database connection
-const pool = new Pool({
+const client = new Client({
   connectionString: process.env.DATABASE_URL,
   ssl: {
-    rejectUnauthorized: false, // Required for Neon free tier
+    rejectUnauthorized: false, // for Neon/remote Postgres
   },
 });
 
-async function createTables(): Promise<void> {
-  let client: PoolClient | null = null;
-
+async function runMigrations() {
   try {
-    console.log("Creating database tables...");
+    await client.connect();
+    console.log("Connected to database ✅");
 
-    // Users table
-    await pool.query(`
+    // Example migration: create users table for BetterAuth
+    await client.query(`
       CREATE TABLE IF NOT EXISTS users (
-        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        id SERIAL PRIMARY KEY,
         email VARCHAR(255) UNIQUE NOT NULL,
-        password_hash VARCHAR(255) NOT NULL,
-        name VARCHAR(255),
-        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-        email_verified BOOLEAN DEFAULT FALSE,
-        email_verification_token VARCHAR(255),
-        password_reset_token VARCHAR(255),
-        password_reset_expires TIMESTAMP WITH TIME ZONE,
-        last_login TIMESTAMP WITH TIME ZONE
+        password_hash TEXT,
+        created_at TIMESTAMP DEFAULT NOW()
       );
     `);
+    console.log("Users table ensured ✅");
 
-    // Sessions table
-    await pool.query(`
+    // Example migration: create sessions table
+    await client.query(`
       CREATE TABLE IF NOT EXISTS sessions (
-        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-        user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-        session_token VARCHAR(255) UNIQUE NOT NULL,
-        refresh_token VARCHAR(255) UNIQUE NOT NULL,
-        expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
-        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-        last_accessed TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-        ip_address INET,
-        user_agent TEXT,
-        is_active BOOLEAN DEFAULT TRUE
+        id SERIAL PRIMARY KEY,
+        user_id INT REFERENCES users(id) ON DELETE CASCADE,
+        token TEXT NOT NULL,
+        expires_at TIMESTAMP NOT NULL,
+        created_at TIMESTAMP DEFAULT NOW()
       );
     `);
+    console.log("Sessions table ensured ✅");
 
-    // Password reset tokens table
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS password_reset_tokens (
-        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-        user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-        token VARCHAR(255) UNIQUE NOT NULL,
-        expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
-        used BOOLEAN DEFAULT FALSE,
-        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-      );
-    `);
-
-    console.log("Database tables created successfully!");
-    process.exit(0);
-  } catch (error) {
-    console.error("Error creating database tables:", error);
-    process.exit(1);
+    console.log("All migrations completed successfully 🎉");
+  } catch (err) {
+    console.error("Migration failed ❌", err);
   } finally {
-    await pool.end();
+    await client.end();
+    console.log("Disconnected from database");
   }
 }
 
-// Run migration if executed directly
-if (require.main === module) {
-  createTables().catch((err) => {
-    console.error("Unhandled migration error:", err);
-    process.exit(1);
-  });
-}
-
-export { pool, createTables };
+runMigrations();
