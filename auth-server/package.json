@@ -1,29 +1,25 @@
 {
   "name": "auth-server",
   "version": "1.0.0",
-  "description": "BetterAuth + Neon DB server",
   "main": "dist/index.js",
   "scripts": {
     "dev": "ts-node src/index.ts",
     "build": "tsc",
-    "start": "node dist/index.js",
-    "migrate": "ts-node src/migrate.ts"
+    "start": "node dist/index.js"
   },
   "dependencies": {
+    "@better-auth/core": "^1.4.7",
     "better-auth": "^1.4.7",
     "express": "^4.18.2",
-    "pg": "^8.11.0",
-    "cors": "^2.8.5"
+    "cors": "^2.8.5",
+    "pg": "^8.11.0"
   },
   "devDependencies": {
     "@types/express": "^4.17.17",
     "@types/node": "^20.6.3",
     "@types/cors": "^2.8.17",
+    "@types/pg": "^8.6.6",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2"
-  },
-  "engines": {
-    "node": ">=18.0.0"
-  },
-  "license": "MIT"
+  }
 }
