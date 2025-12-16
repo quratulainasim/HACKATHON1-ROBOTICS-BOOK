@@ -1,12 +1,11 @@
-// src/migrate.ts
+import * as dotenv from "dotenv";
+dotenv.config();
+
 import { Client } from "pg";
-import "dotenv/config";
 
 const client = new Client({
   connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false, // for Neon/remote Postgres
-  },
+  ssl: { rejectUnauthorized: false },
 });
 
 async function runMigrations() {
@@ -14,7 +13,6 @@ async function runMigrations() {
     await client.connect();
     console.log("Connected to database ✅");
 
-    // Example migration: create users table for BetterAuth
     await client.query(`
       CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
@@ -23,9 +21,7 @@ async function runMigrations() {
         created_at TIMESTAMP DEFAULT NOW()
       );
     `);
-    console.log("Users table ensured ✅");
 
-    // Example migration: create sessions table
     await client.query(`
       CREATE TABLE IF NOT EXISTS sessions (
         id SERIAL PRIMARY KEY,
@@ -35,9 +31,8 @@ async function runMigrations() {
         created_at TIMESTAMP DEFAULT NOW()
       );
     `);
-    console.log("Sessions table ensured ✅");
 
-    console.log("All migrations completed successfully 🎉");
+    console.log("Migrations completed 🎉");
   } catch (err) {
     console.error("Migration failed ❌", err);
   } finally {
