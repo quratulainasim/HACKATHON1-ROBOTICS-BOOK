@@ -1,41 +1,15 @@
-import { Client } from "pg";
-
-const DATABASE_URL = process.env.DATABASE_URL;
-
-if (!DATABASE_URL) {
-  throw new Error("DATABASE_URL is not set");
-}
+import { betterAuth } from "better-auth";
 
 async function migrate() {
-  const client = new Client({
-    connectionString: DATABASE_URL
+  const auth = betterAuth({
+    secret: process.env.AUTH_SECRET!,
+    baseURL: process.env.AUTH_BASE_URL!,
+    database: {
+      url: process.env.DATABASE_URL!,
+    },
   });
 
-  await client.connect();
-
-  /**
-   * Better Auth schema (minimal required)
-   * Safe to run multiple times
-   */
-  await client.query(`
-    CREATE TABLE IF NOT EXISTS users (
-      id TEXT PRIMARY KEY,
-      email TEXT UNIQUE,
-      name TEXT,
-      image TEXT,
-      created_at TIMESTAMP DEFAULT now()
-    );
-  `);
-
-  await client.query(`
-    CREATE TABLE IF NOT EXISTS sessions (
-      id TEXT PRIMARY KEY,
-      user_id TEXT REFERENCES users(id) ON DELETE CASCADE,
-      expires_at TIMESTAMP NOT NULL
-    );
-  `);
-
-  await client.end();
+  await auth.migrate();
   console.log("Migration completed");
 }
 
