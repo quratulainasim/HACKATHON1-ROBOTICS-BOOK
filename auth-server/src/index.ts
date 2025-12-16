@@ -1,24 +1,22 @@
 import express from "express";
 import { betterAuth } from "better-auth";
+import { expressAdapter } from "@better-auth/node";
 
 const app = express();
 app.use(express.json());
 
 const auth = betterAuth({
-  secret: process.env.AUTH_SECRET!, // ✅ uses AUTH_SECRET only
-  baseURL: process.env.AUTH_BASE_URL!,
   database: {
-    url: process.env.DATABASE_URL!,
+    type: "postgres",
+    url: process.env.DATABASE_URL!
   },
+  secret: process.env.AUTH_SECRET!,
+  baseURL: process.env.AUTH_BASE_URL!
 });
 
-app.use("/auth", auth.handler);
+app.use("/auth", expressAdapter(auth));
 
-app.get("/", (_req, res) => {
-  res.send("Auth server running");
-});
-
-const PORT = Number(process.env.PORT) || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+  console.log(`Auth server running on port ${port}`);
 });
