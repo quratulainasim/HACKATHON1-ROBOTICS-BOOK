@@ -1,46 +1,24 @@
+import express from "express";
+import { betterAuth } from "better-auth";
 
-import { createServer } from "http";
-import { auth } from "better-auth";
+const app = express();
+app.use(express.json());
 
-/**
- * Railway injects env vars automatically.
- * DO NOT use dotenv here.
- */
-const PORT = Number(process.env.PORT || 3000);
-const HOST = process.env.HOST || "0.0.0.0";
-
-const AUTH_SECRET = process.env.AUTH_SECRET;
-const AUTH_BASE_URL = process.env.AUTH_BASE_URL;
-const DATABASE_URL = process.env.DATABASE_URL;
-
-if (!AUTH_SECRET || !AUTH_BASE_URL || !DATABASE_URL) {
-  throw new Error("Missing required environment variables");
-}
-
-const authHandler = auth({
-  baseURL: AUTH_BASE_URL,
-  secret: AUTH_SECRET,
+const auth = betterAuth({
+  secret: process.env.AUTH_SECRET!, // ✅ uses AUTH_SECRET only
+  baseURL: process.env.AUTH_BASE_URL!,
   database: {
-    url: DATABASE_URL
-  }
+    url: process.env.DATABASE_URL!,
+  },
 });
 
-const server = createServer(async (req, res) => {
-  if (!req.url) {
-    res.statusCode = 400;
-    res.end("Bad Request");
-    return;
-  }
+app.use("/auth", auth.handler);
 
-  if (req.url.startsWith("/auth")) {
-    await authHandler(req, res);
-    return;
-  }
-
-  res.statusCode = 200;
-  res.end("Auth server running");
+app.get("/", (_req, res) => {
+  res.send("Auth server running");
 });
 
-server.listen(PORT, HOST, () => {
-  console.log(`Auth server running on ${HOST}:${PORT}`);
+const PORT = Number(process.env.PORT) || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
