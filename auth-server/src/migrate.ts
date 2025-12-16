@@ -1,30 +1,45 @@
-import { Client } from 'pg';
+import { Client } from "pg";
 
-async function migrate() {
-  const db = new Client({
-    connectionString: process.env.DATABASE_URL,
-  });
+const DATABASE_URL = process.env.DATABASE_URL;
 
-  try {
-    await db.connect();
-    console.log('Connected to DB for migration.');
-
-    // Example migration: Create users table
-    await db.query(`
-      CREATE TABLE IF NOT EXISTS users (
-        id SERIAL PRIMARY KEY,
-        email TEXT UNIQUE NOT NULL,
-        password TEXT NOT NULL,
-        created_at TIMESTAMP DEFAULT NOW()
-      )
-    `);
-
-    console.log('Migration completed.');
-  } catch (err) {
-    console.error('Migration failed:', err);
-  } finally {
-    await db.end();
-  }
+if (!DATABASE_URL) {
+  throw new Error("DATABASE_URL is not set");
 }
 
-migrate();
+async function migrate() {
+  const client = new Client({
+    connectionString: DATABASE_URL
+  });
+
+  await client.connect();
+
+  /**
+   * Better Auth schema (minimal required)
+   * Safe to run multiple times
+   */
+  await client.query(`
+    CREATE TABLE IF NOT EXISTS users (
+      id TEXT PRIMARY KEY,
+      email TEXT UNIQUE,
+      name TEXT,
+      image TEXT,
+      created_at TIMESTAMP DEFAULT now()
+    );
+  `);
+
+  await client.query(`
+    CREATE TABLE IF NOT EXISTS sessions (
+      id TEXT PRIMARY KEY,
+      user_id TEXT REFERENCES users(id) ON DELETE CASCADE,
+      expires_at TIMESTAMP NOT NULL
+    );
+  `);
+
+  await client.end();
+  console.log("Migration completed");
+}
+
+migrate().catch((err) => {
+  console.error("Migration failed:", err);
+  process.exit(1);
+});
