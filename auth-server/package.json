@@ -1,7 +1,7 @@
 {
-  "name": "auth-server",
+  "name": "better-auth-server",
   "version": "1.0.0",
-  "description": "Node.js server with Better Auth and Neon DB",
+  "description": "Node.js server using Better Auth",
   "main": "dist/index.js",
   "scripts": {
     "dev": "nodemon src/index.ts",
@@ -12,9 +12,7 @@
     "node": ">=18"
   },
   "dependencies": {
-    "@better-auth/core": "https://github.com/better-auth/better-auth-core.git#main",
-    "@better-auth/node": "https://github.com/better-auth/better-auth-node.git#main",
-    "better-auth": "https://github.com/better-auth/better-auth.git#main",
+    "better-auth": "^1.4.7",
     "express": "^4.18.2",
     "dotenv": "^17.2.3"
   },
