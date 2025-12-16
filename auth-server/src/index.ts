@@ -1,33 +1,46 @@
-import express from "express";
-import cors from "cors";
-import { betterAuth } from "better-auth"; // <-- use betterAuth, not BetterAuth
 
-const app = express();
-app.use(cors());
-app.use(express.json());
+import { createServer } from "http";
+import { auth } from "better-auth";
 
-const auth = betterAuth({
-  apiKey: process.env.BETTER_AUTH_API_KEY!, // Railway secret
-  databaseUrl: process.env.DATABASE_URL!    // PostgreSQL URL from Railway
-});
+/**
+ * Railway injects env vars automatically.
+ * DO NOT use dotenv here.
+ */
+const PORT = Number(process.env.PORT || 3000);
+const HOST = process.env.HOST || "0.0.0.0";
 
-// Example route
-app.get("/", async (req, res) => {
-  res.send("Server is running!");
-});
+const AUTH_SECRET = process.env.AUTH_SECRET;
+const AUTH_BASE_URL = process.env.AUTH_BASE_URL;
+const DATABASE_URL = process.env.DATABASE_URL;
 
-// Example: create user route
-app.post("/signup", async (req, res) => {
-  const { email, password } = req.body;
-  try {
-    const user = await auth.createUser({ email, password });
-    res.json(user);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
+if (!AUTH_SECRET || !AUTH_BASE_URL || !DATABASE_URL) {
+  throw new Error("Missing required environment variables");
+}
+
+const authHandler = auth({
+  baseURL: AUTH_BASE_URL,
+  secret: AUTH_SECRET,
+  database: {
+    url: DATABASE_URL
   }
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+const server = createServer(async (req, res) => {
+  if (!req.url) {
+    res.statusCode = 400;
+    res.end("Bad Request");
+    return;
+  }
+
+  if (req.url.startsWith("/auth")) {
+    await authHandler(req, res);
+    return;
+  }
+
+  res.statusCode = 200;
+  res.end("Auth server running");
+});
+
+server.listen(PORT, HOST, () => {
+  console.log(`Auth server running on ${HOST}:${PORT}`);
 });
