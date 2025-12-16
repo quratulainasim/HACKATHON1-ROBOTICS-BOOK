@@ -1,28 +1,26 @@
 {
   "name": "auth-server",
   "version": "1.0.0",
-  "description": "Server using Better Auth with GitHub link",
+  "description": "Backend server with Better Auth",
   "main": "dist/index.js",
   "scripts": {
     "dev": "nodemon src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js"
   },
+  "engines": {
+    "node": ">=18"
+  },
   "dependencies": {
-    "better-auth": "^1.4.7",
-    "@better-auth/node": "github:better-auth/better-auth-node#main",
-    "@better-auth/core": "^1.4.7",
+    "@better-auth/core": "https://github.com/better-auth/better-auth-core.git#main",
+    "@better-auth/node": "https://github.com/better-auth/better-auth-node.git#main",
+    "better-auth": "https://github.com/better-auth/better-auth.git#main",
     "express": "^4.18.2",
-    "cors": "^2.8.5",
     "dotenv": "^17.2.3"
   },
   "devDependencies": {
     "typescript": "^5.2.2",
-    "nodemon": "^3.1.11",
-    "@types/node": "^20.5.1",
-    "@types/express": "^4.17.22"
-  },
-  "engines": {
-    "node": ">=18"
+    "ts-node": "^10.9.1",
+    "nodemon": "^3.1.11"
   }
 }
