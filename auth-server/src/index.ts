@@ -4,21 +4,20 @@ import { toNodeHandler } from "better-auth/node";
 
 const app = express();
 
-// Create auth instance – note the lowercase 'u' in baseUrl
+// Create auth instance
 const auth = betterAuth({
   secret: process.env.AUTH_SECRET!,
-  baseUrl: process.env.AUTH_BASE_URL!, // ← fixed: baseUrl (not baseURL)
-  // Add your database, emailAndPassword, socialProviders, etc. here if needed
+  baseURL: process.env.AUTH_BASE_URL!, // ← اب baseURL (capital URL)
+  // یہاں database, emailAndPassword, socialProviders وغیرہ add کرو اگر ضرورت ہو
 });
 
-// Recommended mounting: use app.use with exact base path
-// This avoids wildcard issues in Express v4 and matches official examples
+// Better Auth handler کو exact path پر mount کرو
 app.use("/api/auth", toNodeHandler(auth));
 
-// Place express.json() AFTER the auth handler (critical!)
+// IMPORTANT: express.json() کو Better Auth handler کے بعد لگاؤ
 app.use(express.json());
 
-// Health check route
+// Health check
 app.get("/", (_req, res) => {
   res.send("Auth server running");
 });
