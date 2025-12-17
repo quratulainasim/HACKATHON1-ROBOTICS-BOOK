@@ -1,31 +1,34 @@
 import express from "express";
-import cors from "cors";
 import { betterAuth } from "better-auth";
-import { postgresAdapter } from "better-auth/adapters/postgres";
 
 const app = express();
 
-app.use(cors({
-  origin: process.env.FRONTEND_URL,
-  credentials: true
-}));
-
 app.use(express.json());
 
-/* Better Auth setup */
 const auth = betterAuth({
+  app: {
+    name: "Auth Server",
+    baseURL: process.env.AUTH_BASE_URL, // ✅ correct casing
+  },
+  database: {
+    url: process.env.DATABASE_URL!,
+    type: "postgres",
+  },
+  emailAndPassword: {
+    enabled: true,
+    requireEmailVerification: false,
+  },
   secret: process.env.AUTH_SECRET!,
-  baseUrl: process.env.AUTH_BASE_URL!,
-  database: postgresAdapter({
-    connectionString: process.env.DATABASE_URL!,
-    ssl: { rejectUnauthorized: false }
-  })
 });
 
-/* Mount Better Auth routes */
-app.use("/auth", auth.router);
+// ✅ USE DIRECTLY AS MIDDLEWARE
+app.use("/auth", auth);
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log("✅ Auth server running on port", PORT);
+app.get("/health", (_req, res) => {
+  res.json({ ok: true });
+});
+
+const port = Number(process.env.PORT) || 3000;
+app.listen(port, "0.0.0.0", () => {
+  console.log(`Auth server running on port ${port}`);
 });
