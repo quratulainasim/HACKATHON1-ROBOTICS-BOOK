@@ -1,6 +1,5 @@
 import express from "express";
 import { betterAuth } from "better-auth";
-import { expressAdapter } from "@better-auth/node";
 
 const app = express();
 app.use(express.json());
@@ -14,7 +13,15 @@ const auth = betterAuth({
   baseURL: process.env.AUTH_BASE_URL!
 });
 
-app.use("/auth", expressAdapter(auth));
+/**
+ * Minimal HTTP bridge (NO @better-auth/node)
+ */
+app.post("/auth/*", async (req, res) => {
+  const response = await auth.fetch(req);
+  res.status(response.status);
+  response.headers.forEach((v, k) => res.setHeader(k, v));
+  res.send(await response.text());
+});
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
