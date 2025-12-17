@@ -1,6 +1,5 @@
-// Type definitions for better-auth
-declare module 'better-auth' {
-  interface BetterAuthOptions {
+declare module "better-auth" {
+  export interface BetterAuthOptions {
     app?: {
       name?: string;
       baseURL?: string;
@@ -8,9 +7,8 @@ declare module 'better-auth' {
     };
     database: {
       url: string;
-      type: string;
+      type: "postgres";
     };
-    socialProviders?: object;
     emailAndPassword: {
       enabled: boolean;
       requireEmailVerification: boolean;
@@ -18,9 +16,13 @@ declare module 'better-auth' {
     secret: string;
   }
 
-  interface BetterAuthInstance {
-    (req: any, res: any, next: any): void;
-  }
+  export type BetterAuthHandler = (
+    req: any,
+    res: any,
+    next: any
+  ) => void;
 
-  export function betterAuth(options: BetterAuthOptions): BetterAuthInstance;
+  export function betterAuth(
+    options: BetterAuthOptions
+  ): BetterAuthHandler;
 }
