@@ -1,29 +1,34 @@
 import express from "express";
+import cors from "cors";
 import { betterAuth } from "better-auth";
+import { Pool } from "pg";
 
 const app = express();
+
+app.use(cors({
+  origin: process.env.FRONTEND_URL,
+  credentials: true
+}));
+
 app.use(express.json());
 
+/* PostgreSQL (Neon / Railway) */
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false }
+});
+
+/* Better Auth instance */
 const auth = betterAuth({
-  database: {
-    type: "postgres",
-    url: process.env.DATABASE_URL!
-  },
+  database: pool,
   secret: process.env.AUTH_SECRET!,
-  baseURL: process.env.AUTH_BASE_URL!
+  baseUrl: process.env.AUTH_BASE_URL!,
 });
 
-/**
- * Minimal HTTP bridge (NO @better-auth/node)
- */
-app.post("/auth/*", async (req, res) => {
-  const response = await auth.fetch(req);
-  res.status(response.status);
-  response.headers.forEach((v, k) => res.setHeader(k, v));
-  res.send(await response.text());
-});
+/* Better Auth routes */
+app.use("/auth", auth.handler);
 
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`Auth server running on port ${port}`);
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log("Auth server running on port", PORT);
 });
