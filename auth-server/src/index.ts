@@ -1,20 +1,24 @@
 import express from "express";
 import { betterAuth } from "better-auth";
+import { toNodeHandler } from "better-auth/node";
 
 const app = express();
-app.use(express.json());
 
-// ✅ create auth instance
+// Create auth instance
 const auth = betterAuth({
   secret: process.env.AUTH_SECRET!,
-  baseURL: process.env.AUTH_BASE_URL!,
+  baseURL: process.env.AUTH_BASE_URL!, // e.g., "https://your-app.up.railway.app"
+  // basePath: "/api/auth", // Optional: uncomment if you want to make it configurable
+  // Add database, emailAndPassword, socialProviders, etc. here
 });
 
-// ✅ mount routes CORRECTLY
-app.post("/auth/*", async (req, res) => {
-  return auth.handler(req, res);
-});
+// Mount Better Auth on /api/auth/*
+app.all("/api/auth/*", toNodeHandler(auth));
 
+// Place express.json() AFTER the auth handler (important!)
+app.use(express.json());
+
+// Health check route
 app.get("/", (_req, res) => {
   res.send("Auth server running");
 });
