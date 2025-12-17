@@ -2,33 +2,24 @@ import express from "express";
 import { betterAuth } from "better-auth";
 
 const app = express();
-
 app.use(express.json());
 
+// ✅ create auth instance
 const auth = betterAuth({
-  app: {
-    name: "Auth Server",
-    baseURL: process.env.AUTH_BASE_URL, // ✅ correct casing
-  },
-  database: {
-    url: process.env.DATABASE_URL!,
-    type: "postgres",
-  },
-  emailAndPassword: {
-    enabled: true,
-    requireEmailVerification: false,
-  },
   secret: process.env.AUTH_SECRET!,
+  baseURL: process.env.AUTH_BASE_URL!,
 });
 
-// ✅ USE DIRECTLY AS MIDDLEWARE
-app.use("/auth", auth);
-
-app.get("/health", (_req, res) => {
-  res.json({ ok: true });
+// ✅ mount routes CORRECTLY
+app.post("/auth/*", async (req, res) => {
+  return auth.handler(req, res);
 });
 
-const port = Number(process.env.PORT) || 3000;
-app.listen(port, "0.0.0.0", () => {
-  console.log(`Auth server running on port ${port}`);
+app.get("/", (_req, res) => {
+  res.send("Auth server running");
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
