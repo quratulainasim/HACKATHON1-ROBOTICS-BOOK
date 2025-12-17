@@ -8,7 +8,6 @@
   },
   "dependencies": {
     "better-auth": "^1.4.7",
-    "@better-auth/node": "^1.4.7",
     "express": "^4.19.2"
   },
   "devDependencies": {
