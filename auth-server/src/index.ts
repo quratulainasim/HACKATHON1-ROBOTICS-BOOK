@@ -4,22 +4,27 @@ import { toNodeHandler } from "better-auth/node";
 
 const app = express();
 
-// Create auth instance
+// Better Auth instance
 const auth = betterAuth({
   secret: process.env.AUTH_SECRET!,
-  baseURL: process.env.AUTH_BASE_URL!, // ← اب baseURL (capital URL)
-  // یہاں database, emailAndPassword, socialProviders وغیرہ add کرو اگر ضرورت ہو
+  baseURL: process.env.AUTH_BASE_URL!, // ← یہی صحیح ہے: baseURL (capital U اور L)
+
+  // یہاں database adapter add کرو (example کے لیے comment کیا ہوا ہے)
+  // database: drizzleAdapter(db, { provider: "pg" }),
+
+  // email/password یا social providers enable کرو اگر چاہیے
+  // emailAndPassword: { enabled: true },
 });
 
-// Better Auth handler کو exact path پر mount کرو
-app.use("/api/auth", toNodeHandler(auth));
+// All auth routes کو handle کرو (Express v4 کے لیے یہ syntax)
+app.all("/api/auth/*", toNodeHandler(auth));
 
-// IMPORTANT: express.json() کو Better Auth handler کے بعد لگاؤ
+// IMPORTANT: express.json() کو auth handler کے بعد رکھو
 app.use(express.json());
 
-// Health check
+// Simple health check
 app.get("/", (_req, res) => {
-  res.send("Auth server running");
+  res.send("Auth server running 🚀");
 });
 
 const PORT = process.env.PORT || 3000;
